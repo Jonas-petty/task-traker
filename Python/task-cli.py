@@ -1,38 +1,70 @@
-# Task Traker
-import os
 import sys
+from datetime import datetime
 import json
 
-tasks = []
-task = {
+task =  {
     "id": 0,
     "description": "",
     "status": "",
-    "created_at": "",
-    "updated_at": ""
+    "createdAt": "",
+    "updatedAt": ""
 }
 
+tasks = []
+    
 
-def main():
-    if os.path.exists("task-traker.json"):
-        with open("task-traker.json", "r+") as file:
-            data = json.load(file)
 
-            if isinstance(data, list):
-                data.append(task)
-                print(data)
-            else:
-                data = tasks.append(task)
-            
-            json.dump(data, file)
-
-            file.truncate()
-    else:
+J# TODO load the content of the file to add its content... it should be a different fucntion, so I could reuse it on the list argument.
+def add(args):
+    if len(args) == 3:
         with open("task-traker.json", "w+") as file:
-            tasks.append(task)
-            json.dump(tasks, file)
+            current_timestamp = datetime.now().strftime("%m/%d/%Y-%H:%M")
+            task =  {
+                "id": 1,
+                "description": args[2],
+                "status": "todo",
+                "createdAt": current_timestamp,
+                "updatedAt": current_timestamp
+            }
+
+            content = file.read()
+            print(content)
+            if content == "":
+                tasks.append(task)
+                json_tasks = json.dumps(tasks)
+                file.write(json_tasks)
+            else:
+                json_tasks = json.loads(file)
+                print(json)
+            
+            
+        print(content)
+        
+    else:
+        print('Please use two arguments to add a task (ex: python task-cli add "Task description")')
+
+
+def handle_args(args):
+    match args[1]:
+        case "add":
+            add(args)
+        case "update":
+            return args[1]
+        case "delete":
+            return args[1]
+        case "mark-in-progress":
+            return args[1]
+        case "mark-done":
+            return args[1]
+        case "list":
+            return args[1]
+        case "list-in-progress":
+            return args[1]
+        case _:
+            return "Argument invalid"
+        
 
 
 
-if __name__ == "__main__":
-    main()
+        
+handle_args(sys.argv)
