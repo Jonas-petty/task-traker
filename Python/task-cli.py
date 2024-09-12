@@ -11,14 +11,37 @@ task =  {
 }
 
 tasks = []
+
+"""
+Should return a list with the tasks or a None if the file is empty
+"""
+def load_file(file_name):
+    with open(file_name, "r+") as file:
+        data = file.read()
+        if data == "":
+            return None
+        return data
+
+"""
+Lists all the tasks saved on the file or informe that the file is empty
+"""
+def list_task():
+    json_data = load_file("task-traker.json")
+    if json_data != None:
+        data = json.loads(json_data)
+        print("Tasks:")
+        for task in data:
+            print(f"- {task["description"]}\tstatus: {task["status"]}")
+    else:
+        print("No Tasks available. Use the 'add' command to insert a new task.")
     
 
 
-J# TODO load the content of the file to add its content... it should be a different fucntion, so I could reuse it on the list argument.
+# TODO load the content of the file to add its content... it should be a different fucntion, so I could reuse it on the list argument.
 def add(args):
     if len(args) == 3:
         with open("task-traker.json", "w+") as file:
-            current_timestamp = datetime.now().strftime("%m/%d/%Y-%H:%M")
+            current_timestamp = datetime.now().strftime("%m/%d/%Y")
             task =  {
                 "id": 1,
                 "description": args[2],
@@ -57,14 +80,12 @@ def handle_args(args):
         case "mark-done":
             return args[1]
         case "list":
-            return args[1]
+            list_task()
         case "list-in-progress":
             return args[1]
         case _:
             return "Argument invalid"
         
 
-
-
-        
+     
 handle_args(sys.argv)
