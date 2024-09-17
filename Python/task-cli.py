@@ -13,20 +13,37 @@ task =  {
 tasks = []
 
 """
-Should return a list with the tasks or a None if the file is empty
+Returns a list with the tasks or None if the file is empty
 """
-def load_file(file_name):
-    with open(file_name, "r+") as file:
-        data = file.read()
-        if data == "":
-            return None
-        return data
+def load_file(file_name="task-traker.json"):
+    try:
+        with open(file_name, "+r") as file:
+            data = file.read()
+            return data
+    except FileNotFoundError:
+        return None
+
 
 """
-Lists all the tasks saved on the file or informe that the file is empty
+Saves the data to the json file
 """
-def list_task():
-    json_data = load_file("task-traker.json")
+def save_file(data=[], file_name="task-traker.json"):
+    try:
+        with open(file_name, "w+") as file:
+        
+            data = json.dumps(data)
+        
+            file.writelines(data)
+        return True
+    except:
+        return False
+
+
+"""
+Lists all the tasks saved on the file or inform that the file is empty
+"""
+def list_tasks():
+    json_data = load_file()
     if json_data != None:
         data = json.loads(json_data)
         print("Tasks:")
@@ -34,43 +51,49 @@ def list_task():
             print(f"- {task["description"]}\tstatus: {task["status"]}")
     else:
         print("No Tasks available. Use the 'add' command to insert a new task.")
-    
 
 
-# TODO load the content of the file to add its content... it should be a different fucntion, so I could reuse it on the list argument.
-def add(args):
-    if len(args) == 3:
-        with open("task-traker.json", "w+") as file:
-            current_timestamp = datetime.now().strftime("%m/%d/%Y")
+"""
+Adds one or more tasks to the json file or creates it if the file does not exists
+"""
+def add_task(args):
+    new_tasks = args[2:]
+    if new_tasks:
+        json_data = load_file()
+
+        id = 1
+        if json_data == None:
+            data = []
+        else:
+            data = json.loads(json_data)
+            id = len(data) + 1
+
+        for task in new_tasks:
+            current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             task =  {
-                "id": 1,
-                "description": args[2],
+                "id": id,
+                "description": task,
                 "status": "todo",
-                "createdAt": current_timestamp,
-                "updatedAt": current_timestamp
+                "createdAt": current_date,
+                "updatedAt": current_date
             }
-
-            content = file.read()
-            print(content)
-            if content == "":
-                tasks.append(task)
-                json_tasks = json.dumps(tasks)
-                file.write(json_tasks)
-            else:
-                json_tasks = json.loads(file)
-                print(json)
-            
-            
-        print(content)
+            data.append(task)
+            id += 1
+        
+        more_than_one = True if len(new_tasks) > 1 else False
+        if save_file(data):
+            print(f"{"Tasks" if more_than_one else "Task"} added successfully!")
         
     else:
-        print('Please use two arguments to add a task (ex: python task-cli add "Task description")')
+        print("No task was informed, please try again.")
+        
+
 
 
 def handle_args(args):
     match args[1]:
         case "add":
-            add(args)
+            add_task(args)
         case "update":
             return args[1]
         case "delete":
@@ -80,12 +103,10 @@ def handle_args(args):
         case "mark-done":
             return args[1]
         case "list":
-            list_task()
+            list_tasks()
         case "list-in-progress":
             return args[1]
         case _:
             return "Argument invalid"
-        
-
-     
+         
 handle_args(sys.argv)
