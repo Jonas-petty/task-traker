@@ -48,7 +48,7 @@ def list_tasks():
         data = json.loads(json_data)
         print("Tasks:")
         for task in data:
-            print(f"- {task["description"]}\tstatus: {task["status"]}")
+            print(f"{task["id"]} - {task["description"]}\tstatus: {task["status"]}")
     else:
         print("No Tasks available. Use the 'add' command to insert a new task.")
 
@@ -88,6 +88,28 @@ def add_task(args):
         print("No task was informed, please try again.")
         
 
+"""
+Delete a task by its ID
+"""
+def delete_task(args):
+    
+    if len(args) == 3 and args[2].isdecimal() and int(args[2]) >= 1:
+        id = int(args[2])
+        json_data = load_file()
+        data = json.loads(json_data)
+        
+        found = False
+        for i, task in enumerate(data):
+            if task["id"] == id:
+                data.pop(i)
+                save_file(data)
+                found = True
+                break
+
+        if not found:
+            print("Id is not available.")
+    else:
+        print("Wrong format, please try again.")
 
 
 def handle_args(args):
@@ -97,7 +119,7 @@ def handle_args(args):
         case "update":
             return args[1]
         case "delete":
-            return args[1]
+            delete_task(args)
         case "mark-in-progress":
             return args[1]
         case "mark-done":
@@ -107,6 +129,6 @@ def handle_args(args):
         case "list-in-progress":
             return args[1]
         case _:
-            return "Argument invalid"
+            print("Argument invalid")
          
 handle_args(sys.argv)
