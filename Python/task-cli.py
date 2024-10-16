@@ -113,22 +113,26 @@ def delete_task(args):
 
 
 def handle_args(args):
-    match args[1]:
-        case "add":
-            add_task(args)
-        case "update":
-            return args[1]
-        case "delete":
-            delete_task(args)
-        case "mark-in-progress":
-            return args[1]
-        case "mark-done":
-            return args[1]
-        case "list":
-            list_tasks()
-        case "list-in-progress":
-            return args[1]
-        case _:
-            print("Argument invalid")
+    
+    if len(args) <= 1:
+        print("No argument informed")
+    else:
+        match args[1]:
+            case "add":
+                add_task(args)
+            case "update":
+                return args[1]
+            case "delete":
+                delete_task(args)
+            case "mark-in-progress":
+                return args[1]
+            case "mark-done":
+                return args[1]
+            case "list":
+                list_tasks()
+            case "list-in-progress":
+                return args[1]
+            case _:
+                print("Argument invalid")
          
 handle_args(sys.argv)
