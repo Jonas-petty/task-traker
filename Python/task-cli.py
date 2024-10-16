@@ -86,7 +86,26 @@ def add_task(args):
         
     else:
         print("No task was informed, please try again.")
-        
+
+
+"""
+Updates the description of the task by its id
+"""
+def update_task(args):
+    if len(args) == 4 and args[2].isdecimal() and int(args[2]) >= 1:
+        json_data = load_file()
+        if json_data != None:
+            data = json.loads(json_data)
+            for task in data:
+                id = int(task["id"])
+                if id == int(args[2]):
+                    task["description"] = args[3]
+                    break
+            
+            save_file(data)
+    else:
+        print("Please inform all the arguments")
+                
 
 """
 Delete a task by its ID
@@ -121,7 +140,7 @@ def handle_args(args):
             case "add":
                 add_task(args)
             case "update":
-                return args[1]
+                update_task(args)
             case "delete":
                 delete_task(args)
             case "mark-in-progress":
