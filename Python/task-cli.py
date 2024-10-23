@@ -89,22 +89,48 @@ def add_task(args):
 
 
 """
-Updates the description of the task by its id
+Updates the task
 """
-def update_task(args):
-    if len(args) == 4 and args[2].isdecimal() and int(args[2]) >= 1:
+def update_task(args, new_status=""):
+    if len(args) == 4 or len(args) == 3:
         json_data = load_file()
         if json_data != None:
             data = json.loads(json_data)
-            for task in data:
-                id = int(task["id"])
-                if id == int(args[2]):
-                    task["description"] = args[3]
-                    break
+            if new_status == "":
+                new_data = update_task_description(data, args[2], args[3])
+            else:
+                new_data = update_task_status(data, args[2], new_status)
             
-            save_file(data)
+            save_file(new_data)
     else:
         print("Please inform all the arguments")
+
+
+"""
+Updates the task description
+"""
+def update_task_description(data, id, new_description):
+    if id.isdecimal() and int(id) >= 1:
+        for task in data:
+            current_id = int(task["id"])
+            if current_id == int(id):
+                task["description"] = new_description
+                break
+
+    return data
+
+"""
+Updates the task status
+"""
+def update_task_status(data, id, new_status):
+    if id.isdecimal() and int(id) >= 1:
+        for task in data:
+            current_id = int(task["id"])
+            if current_id == int(id):
+                task["status"] = new_status
+                break
+
+    return data
                 
 
 """
@@ -144,9 +170,9 @@ def handle_args(args):
             case "delete":
                 delete_task(args)
             case "mark-in-progress":
-                return args[1]
+                update_task(args, "in-progress")
             case "mark-done":
-                return args[1]
+                update_task(args, "done")
             case "list":
                 list_tasks()
             case "list-in-progress":
