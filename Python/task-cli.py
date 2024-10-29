@@ -42,13 +42,14 @@ def save_file(data=[], file_name="task-traker.json"):
 """
 Lists all the tasks saved on the file or inform that the file is empty
 """
-def list_tasks():
+def list_tasks(status=""):
     json_data = load_file()
     if json_data != None:
         data = json.loads(json_data)
         print("Tasks:")
         for task in data:
-            print(f"{task["id"]} - {task["description"]}\tstatus: {task["status"]}")
+            if task["status"] == status or status == "":
+                print(f"{task["id"]} - {task["description"]}\tstatus: {task["status"]}")
     else:
         print("No Tasks available. Use the 'add' command to insert a new task.")
 
@@ -132,7 +133,6 @@ def update_task_status(data, id, new_status):
 
     return data
                 
-
 """
 Delete a task by its ID
 """
@@ -174,9 +174,14 @@ def handle_args(args):
             case "mark-done":
                 update_task(args, "done")
             case "list":
-                list_tasks()
-            case "list-in-progress":
-                return args[1]
+                if len(args) == 2:
+                    list_tasks()
+                else:
+                    available_status = ["in-progress", "done", "todo"]
+                    status = ""
+                    if args[2] in available_status:
+                        status = args[2]
+                    list_tasks(status)
             case _:
                 print("Argument invalid")
          
