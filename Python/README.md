@@ -2,7 +2,7 @@
 
 Hello!
 
-This is the Python code for the challenge of the [Roadmap.sh](!https://roadmap.sh/) [Task tracker Challenge](!https://roadmap.sh/projects/task-tracker)!
+This is the Python code for the challenge of the [Roadmap.sh](https://roadmap.sh/) [Task tracker Challenge](https://roadmap.sh/projects/task-tracker)!
 
 ## How to run it:
 - Have Python 3 installed;
